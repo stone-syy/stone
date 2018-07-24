@@ -75,7 +75,7 @@ for item in all_list(city):
         height=600,
         background_color="#404a59"
     )
-geo = Geo("全国主要城市空气质量", "data from pm2.5", title_color="#fff",
+geo = Geo("《邪不压正》数据分析",
           title_pos="center", width=1200,
           height=600, background_color='#404a59')
 attr, value = geo.cast(data)
