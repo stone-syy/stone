@@ -1,0 +1,38 @@
+#/bin/bash
+#脚本说明：这是一个定期更新Apache服务日志的脚本文件，当检测到Apache服务不存在时会进行重启。监测记录会同步记录到日志中
+###################################################################################################################
+#日志文件路径：/var/log/httpd_updata_log.log
+#Script Name:httpd_updata_log.sh
+#Version:1.0
+#Author:Mr.shi
+#Creation time:2018-11-2
+#####################################################################################################################
+echo "######################################"
+echo "##                                  ##"
+echo "##   开始运行脚本,更新Apache日志    ##"
+echo "##                                  ##"
+echo "######################################"
+#定义变量
+http_port=$(netstat -tunlp | awk {'print $4'} | cut -d: -f2 | grep -o ^80$)
+http_process=$(ps -aux | grep httpd | wc -l)
+#开始判断端口及进程是否正常
+if [[ -n "$http_port" ]] && [[ $http_process -ge 3 ]];then
+    echo -e "\033[42;30mApache service is running.........\033[0m"
+	if [ -f /var/log/httpd_updata_log.log ];then
+	    `perl /opt/awstats/awstats-7.3.0/awstats.sh -updata -config=www.syouy.cn`
+             flag=0
+		if [ "$flag" == 0 ];then
+		    echo -e "\033[42;30mLog Updata Successfully,Updata Time`date +%F_%T`\033[0m" &>>2 /var/log/httpd_updata_log.log
+                else
+		    echo -e "\033[41;30mLog Updata failed,Updata Time`date +%F_%T`\033[0m" &>>2 /var/log/httpd_updata_log.log
+		fi
+	else
+	    touch /var/log/httpd_updata_log.log && echo -e "\033[41;31mThe file not create,create now！\033[0m"	
+        fi
+elif [[ $http_process -lt 3 ]];then
+    echo -e "\033[41;30mThere is a problem with the service, please check,systemctl status httpd.server\033[0m" &>2 /var/log/httpd_updata_log.log
+elif [[ -z "$http_port" ]];then
+    echo -e "\033[42;30m80 port not exits,please check log:/var/log/httpd/error.log \033[0m"
+else
+    echo -e "\033[42;30mUpdata failed.pleaae check log:/var/log/httpd/error.log\033[0m"
+fi
