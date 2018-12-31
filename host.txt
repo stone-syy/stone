@@ -1,0 +1,4 @@
+yp_usdp:usdp:10.202.197.130:12qw!@QW
+sp_usdp:usdp:10.199.255.230:TE#nms1
+sp_gw:rbtgw:10.202.197.134:HWqwe12#
+yp_gw:gateway:10.199.255.236:Har1Cell
